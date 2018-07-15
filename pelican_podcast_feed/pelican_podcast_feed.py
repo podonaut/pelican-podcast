@@ -31,7 +31,7 @@ ITEM_ELEMENTS = (
     'guid',
     'pubDate',
     'itunes:duration',
-    )
+)
 
 DEFAULT_ITEM_ELEMENTS = {}
 for key in ITEM_ELEMENTS:
@@ -72,45 +72,45 @@ class PodcastFeed(Rss201rev2Feed):
         if 'PODCAST_FEED_LANGUAGE' in self.settings:
             handler.addQuickElement(
                 'language', self.settings['PODCAST_FEED_LANGUAGE']
-                )
+            )
         # Adds a copyright root tag. Ex:
         #  <copyright>℗ &© 2014 Hack 'n' Cast</copyright>
         if 'PODCAST_FEED_COPYRIGHT' in self.settings:
             handler.addQuickElement(
                 'copyright', self.settings['PODCAST_FEED_COPYRIGHT']
-                )
+            )
         # Adds a explicit content root tag. Ex:
         #  <itunes:explicit>No</itunes:explicit>
         if 'PODCAST_FEED_EXPLICIT' in self.settings:
             handler.addQuickElement(
                 'itunes:explicit', self.settings['PODCAST_FEED_EXPLICIT']
-                )
+            )
         # Adds a show subtitle root tag. Ex:
         #  <itunes:subtitle>The hacker podcast!</itunes:subtitle>
         if 'PODCAST_FEED_SUBTITLE' in self.settings:
             handler.addQuickElement(
                 'itunes:subtitle', self.settings['PODCAST_FEED_SUBTITLE']
-                )
+            )
         # Adds a author root tag. Ex:
         #  <itunes:author>John Doe</itunes:author>
         if 'PODCAST_FEED_AUTHOR' in self.settings:
             handler.addQuickElement(
                 'itunes:author', self.settings['PODCAST_FEED_AUTHOR']
-                )
+            )
         # Adds a podcast summary root tag. Ex:
         #  <itunes:summary>A podcast about... </itunes:summary>
         if 'PODCAST_FEED_SUMMARY' in self.settings:
             handler.addQuickElement(
                 'itunes:summary', self.settings['PODCAST_FEED_SUMMARY']
-                )
+            )
         # Adds a podcast logo image root tag. Ex:
         #  <itunes:image href="http://example.com/logo.jpg" />
         if 'PODCAST_FEED_IMAGE' in self.settings:
             handler.addQuickElement(
                 'itunes:image', attrs={
                     'href': self.settings['PODCAST_FEED_IMAGE']
-                    }
-                )
+                }
+            )
         # Adds a feed owner root tag an some child tags. Ex:
         #  <itunes:owner>
         #    <itunes:name>John Doe</itunes:name>
@@ -121,10 +121,10 @@ class PodcastFeed(Rss201rev2Feed):
             handler.startElement('itunes:owner', {})
             handler.addQuickElement(
                 'itunes:name', self.settings['PODCAST_FEED_OWNER_NAME']
-                )
+            )
             handler.addQuickElement(
                 'itunes:email', self.settings['PODCAST_FEED_OWNER_EMAIL']
-                )
+            )
             handler.endElement('itunes:owner')
         # Adds a show category root tag and some child tags. Ex:
         #  <itunes:category text="Technology">
@@ -135,15 +135,15 @@ class PodcastFeed(Rss201rev2Feed):
             if type(categories) in (list, tuple):
                 handler.startElement(
                     'itunes:category', attrs={'text': categories[0]}
-                    )
+                )
                 handler.addQuickElement(
                     'itunes:category', attrs={'text': categories[1]}
-                    )
+                )
                 handler.endElement('itunes:category')
             else:
                 handler.addQuickElement(
                     'itunes:category', attrs={'text': categories}
-                    )
+                )
 
     def add_item_elements(self, handler, item):
         """Adds a new element to the iTunes feed, using information from
@@ -238,7 +238,7 @@ class iTunesWriter(Writer):
 
         items['description'] = "<![CDATA[{}]]>".format(
             Markup(item.summary)
-            )
+        )
 
         # Date the article was last modified.
         #  ex: <pubDate>Fri, 13 Jun 2014 04:59:00 -0300</pubDate>
@@ -246,7 +246,7 @@ class iTunesWriter(Writer):
             set_date_tzinfo(
                 item.modified if hasattr(item, 'modified') else item.date,
                 self.settings.get('TIMEZONE', None))
-            )
+        )
 
         # Name(s) for the article's author(s).
         #  ex: <itunes:author>John Doe</itunes:author>
@@ -309,7 +309,7 @@ class PodcastFeedGenerator(Generator):
         self.episodes = []
         self.podcast_episodes = {}
         self.feed_path = self.settings.get('PODCAST_FEED_PATH', None)
-        self.podcasts = self.settings.get('PODCASTS',None)
+        self.podcasts = self.settings.get('PODCASTS', None)
         if self.podcasts:
             for show in self.podcasts:
                 self.podcast_episodes[show] = []
@@ -323,7 +323,7 @@ class PodcastFeedGenerator(Generator):
                 if (article.status.lower() == "published" and
                         hasattr(article, 'podcast')):
                     self.episodes.append(article)
-                    if self.podcasts:                
+                    if self.podcasts:
                         if hasattr(article, 'category'):
                             show = getattr(article, 'category').slug
                             # Only articles in the individual feed categories
@@ -342,18 +342,18 @@ class PodcastFeedGenerator(Generator):
         if self.podcasts:
             # Backup all of the global settings
             self.original_settings = {}
-            self.original_settings['PODCAST_FEED_PATH'] = self.settings.get('PODCAST_FEED_PATH',None)
-            self.original_settings['PODCAST_FEED_TITLE'] = self.settings.get('PODCAST_FEED_TITLE',None)
-            self.original_settings['PODCAST_FEED_EXPLICIT'] = self.settings.get('PODCAST_FEED_EXPLICIT',None)
-            self.original_settings['PODCAST_FEED_LANGUAGE'] = self.settings.get('PODCAST_FEED_LANGUAGE',None)
-            self.original_settings['PODCAST_FEED_COPYRIGHT'] = self.settings.get('PODCAST_FEED_COPYRIGHT',None)
-            self.original_settings['PODCAST_FEED_SUBTITLE'] = self.settings.get('PODCAST_FEED_SUBTITLE',None)
-            self.original_settings['PODCAST_FEED_AUTHOR'] = self.settings.get('PODCAST_FEED_AUTHOR',None)
-            self.original_settings['PODCAST_FEED_SUMMARY'] = self.settings.get('PODCAST_FEED_SUMMARY',None)
-            self.original_settings['PODCAST_FEED_IMAGE'] = self.settings.get('PODCAST_FEED_IMAGE',None)
-            self.original_settings['PODCAST_FEED_OWNER_NAME'] = self.settings.get('PODCAST_FEED_OWNER_NAME',None)
-            self.original_settings['PODCAST_FEED_OWNER_EMAIL'] = self.settings.get('PODCAST_FEED_OWNER_EMAIL',None)
-            self.original_settings['PODCAST_FEED_CATEGORY'] = self.settings.get('PODCAST_FEED_CATEGORY',None)
+            self.original_settings['PODCAST_FEED_PATH'] = self.settings.get('PODCAST_FEED_PATH', None)
+            self.original_settings['PODCAST_FEED_TITLE'] = self.settings.get('PODCAST_FEED_TITLE', None)
+            self.original_settings['PODCAST_FEED_EXPLICIT'] = self.settings.get('PODCAST_FEED_EXPLICIT', None)
+            self.original_settings['PODCAST_FEED_LANGUAGE'] = self.settings.get('PODCAST_FEED_LANGUAGE', None)
+            self.original_settings['PODCAST_FEED_COPYRIGHT'] = self.settings.get('PODCAST_FEED_COPYRIGHT', None)
+            self.original_settings['PODCAST_FEED_SUBTITLE'] = self.settings.get('PODCAST_FEED_SUBTITLE', None)
+            self.original_settings['PODCAST_FEED_AUTHOR'] = self.settings.get('PODCAST_FEED_AUTHOR', None)
+            self.original_settings['PODCAST_FEED_SUMMARY'] = self.settings.get('PODCAST_FEED_SUMMARY', None)
+            self.original_settings['PODCAST_FEED_IMAGE'] = self.settings.get('PODCAST_FEED_IMAGE', None)
+            self.original_settings['PODCAST_FEED_OWNER_NAME'] = self.settings.get('PODCAST_FEED_OWNER_NAME', None)
+            self.original_settings['PODCAST_FEED_OWNER_EMAIL'] = self.settings.get('PODCAST_FEED_OWNER_EMAIL', None)
+            self.original_settings['PODCAST_FEED_CATEGORY'] = self.settings.get('PODCAST_FEED_CATEGORY', None)
             
             for show in self.podcasts:
                 # Override the global settings with the per-show settings

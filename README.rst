@@ -1,12 +1,24 @@
 Pelican Podcast Feed
-####################
+########################################################################
 
 This plugins adds a feed generator and feed writer for your podcast.
 
 **Alert:** Still in early development stage.
 
+Installation from Source
+========================================================================
+You can install this as a source package in the following way:
+
+::
+   python setup.py install
+
+   or
+
+   python setup.py develop
+
+
 Available Settings
-==================
+========================================================================
 
 These are implemented as variables in the pelicanconf file.
 
@@ -26,11 +38,18 @@ These are implemented as variables in the pelicanconf file.
   PODCAST_FEED_CATEGORY = ['iTunes Category','iTunes Subcategory']
 
 Multiple Podcast Feeds
-======================
+========================================================================
 
-You can optionally have a separate podcast feed for different content categories. To use this feature, you'll need to create a nested dictionary, called PODCASTS, with one sub dictionary for each category slug that you want to put into a separate podcast feed. (All of the episodes will continue to appear in the main feed as well, making it a master feed of all episodes.)
+You can optionally have a separate podcast feed for different content
+categories. To use this feature, you'll need to create a nested
+dictionary, called PODCASTS, with one sub dictionary for each category
+slug that you want to put into a separate podcast feed. (All of the
+episodes will continue to appear in the main feed as well, making it a
+master feed of all episodes.)
 
-You can override specific configuration settings from the master feed. Everything that's not explicitly specified will be inherited from the master feed settings.
+You can override specific configuration settings from the master
+feed. Everything that's not explicitly specified will be inherited
+from the master feed settings.
 
 ::
 
