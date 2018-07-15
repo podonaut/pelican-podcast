@@ -43,16 +43,16 @@ class PodcastFeed(Rss201rev2Feed):
     def __init__(self, *args, **kwargs):
         """Nice method docstring goes here"""
         super(PodcastFeed, self).__init__(*args, **kwargs)
-
+    
     def set_settings(self, settings):
         """Helper function which just receives the podcast settings.
         :param settings: A dictionary with all the site settings.
         """
         self.settings = settings
-
+    
     def rss_attributes(self):
         """Returns the podcast feed's attributes.
-
+        
         :return: A dictionary containing the feed's attributes.
         """
         attrs = super(PodcastFeed, self).root_attributes()
@@ -62,47 +62,41 @@ class PodcastFeed(Rss201rev2Feed):
 
     def add_root_elements(self, handler):
         """Adds some basic but useful attributes for an iTunes feed.
-
+        
         :param handler: A SimplerXMLGenerator instance.
         """
         super(PodcastFeed, self).add_root_elements(handler)
-
+        
         # Adds a language root tag. Ex:
         #  <language>en</language>
         if 'PODCAST_FEED_LANGUAGE' in self.settings:
             handler.addQuickElement(
-                'language', self.settings['PODCAST_FEED_LANGUAGE']
-            )
+                'language', self.settings['PODCAST_FEED_LANGUAGE'])
         # Adds a copyright root tag. Ex:
         #  <copyright>℗ &© 2014 Hack 'n' Cast</copyright>
         if 'PODCAST_FEED_COPYRIGHT' in self.settings:
             handler.addQuickElement(
-                'copyright', self.settings['PODCAST_FEED_COPYRIGHT']
-            )
+                'copyright', self.settings['PODCAST_FEED_COPYRIGHT'])
         # Adds a explicit content root tag. Ex:
         #  <itunes:explicit>No</itunes:explicit>
         if 'PODCAST_FEED_EXPLICIT' in self.settings:
             handler.addQuickElement(
-                'itunes:explicit', self.settings['PODCAST_FEED_EXPLICIT']
-            )
+                'itunes:explicit', self.settings['PODCAST_FEED_EXPLICIT'])
         # Adds a show subtitle root tag. Ex:
         #  <itunes:subtitle>The hacker podcast!</itunes:subtitle>
         if 'PODCAST_FEED_SUBTITLE' in self.settings:
             handler.addQuickElement(
-                'itunes:subtitle', self.settings['PODCAST_FEED_SUBTITLE']
-            )
+                'itunes:subtitle', self.settings['PODCAST_FEED_SUBTITLE'])
         # Adds a author root tag. Ex:
         #  <itunes:author>John Doe</itunes:author>
         if 'PODCAST_FEED_AUTHOR' in self.settings:
             handler.addQuickElement(
-                'itunes:author', self.settings['PODCAST_FEED_AUTHOR']
-            )
+                'itunes:author', self.settings['PODCAST_FEED_AUTHOR'])
         # Adds a podcast summary root tag. Ex:
         #  <itunes:summary>A podcast about... </itunes:summary>
         if 'PODCAST_FEED_SUMMARY' in self.settings:
             handler.addQuickElement(
-                'itunes:summary', self.settings['PODCAST_FEED_SUMMARY']
-            )
+                'itunes:summary', self.settings['PODCAST_FEED_SUMMARY'])
         # Adds a podcast logo image root tag. Ex:
         #  <itunes:image href="http://example.com/logo.jpg" />
         if 'PODCAST_FEED_IMAGE' in self.settings:
@@ -120,11 +114,9 @@ class PodcastFeed(Rss201rev2Feed):
                 'PODCAST_FEED_OWNER_EMAIL' in self.settings):
             handler.startElement('itunes:owner', {})
             handler.addQuickElement(
-                'itunes:name', self.settings['PODCAST_FEED_OWNER_NAME']
-            )
+                'itunes:name', self.settings['PODCAST_FEED_OWNER_NAME'])
             handler.addQuickElement(
-                'itunes:email', self.settings['PODCAST_FEED_OWNER_EMAIL']
-            )
+                'itunes:email', self.settings['PODCAST_FEED_OWNER_EMAIL'])
             handler.endElement('itunes:owner')
         # Adds a show category root tag and some child tags. Ex:
         #  <itunes:category text="Technology">
@@ -134,24 +126,21 @@ class PodcastFeed(Rss201rev2Feed):
             categories = self.settings['PODCAST_FEED_CATEGORY']
             if type(categories) in (list, tuple):
                 handler.startElement(
-                    'itunes:category', attrs={'text': categories[0]}
-                )
+                    'itunes:category', attrs={'text': categories[0]})
                 handler.addQuickElement(
-                    'itunes:category', attrs={'text': categories[1]}
-                )
+                    'itunes:category', attrs={'text': categories[1]})
                 handler.endElement('itunes:category')
             else:
                 handler.addQuickElement(
-                    'itunes:category', attrs={'text': categories}
-                )
-
+                    'itunes:category', attrs={'text': categories})
+    
     def add_item_elements(self, handler, item):
         """Adds a new element to the iTunes feed, using information from
         ``item`` to populate it with relevant information about the article.
-
+        
         :param handler: A SimplerXMLGenerator instance
         :param item: The dict generated by iTunesWriter._add_item_to_the_feed
-
+        
         """
         for key in DEFAULT_ITEM_ELEMENTS:
             # empty attributes will be ignored.
@@ -175,11 +164,11 @@ class iTunesWriter(Writer):
     """Writer class for our iTunes feed.  This class is responsible for
     invoking the PodcastFeed and writing the feed itself (using it's superclass
     methods)."""
-
+    
     def __init__(self, *args, **kwargs):
         """Class initializer"""
         super(iTunesWriter, self).__init__(*args, **kwargs)
-
+    
     def _create_new_feed(self, *args):
         """Helper function (called by the super class) which will initialize
         the PodcastFeed object."""
@@ -193,8 +182,7 @@ class iTunesWriter(Writer):
             # this is not expected, let's provide a useful message
             raise Exception(
                 'The Writer._create_new_feed signature has changed, check the '
-                'current Pelican source for the updated signature'
-            )
+                'current Pelican source for the updated signature')
         self.context = context
         description = self.settings.get('PODCAST_FEED_SUMMARY', '')
         title = (self.settings.get('PODCAST_FEED_TITLE', '') or
@@ -206,28 +194,28 @@ class iTunesWriter(Writer):
             description=description)
         feed.set_settings(self.settings)
         return feed
-
+    
     def _add_item_to_the_feed(self, feed, item):
         """Performs an 'in-place' update of existing 'published' articles
         in ``feed`` by creating a new entry using the contents from the
         ``item`` being passed.
         This method is invoked by pelican's core.
-
+        
         :param feed: A PodcastFeed instance.
         :param item: An article (pelican's Article object).
-
+        
         """
         # Local copy of iTunes attributes to add to the feed.
         items = DEFAULT_ITEM_ELEMENTS.copy()
-
+        
         # Link to the new article.
         #  http://example.com/episode-01
         items['link'] = '{0}/{1}'.format(self.site_url, item.url)
-
+        
         # Title for the article.
         #  ex: <title>Episode Title</title>
         items['title'] = Markup(item.title).striptags()
-
+        
         # Summary for the article. This can be obtained either from
         # a ``:description:`` or a ``:summary:`` directive.
         #  ex: <itunes:summary>In this episode... </itunes:summary>
@@ -235,35 +223,33 @@ class iTunesWriter(Writer):
             items['itunes:summary'] = item.description
         else:
             items['itunes:summary'] = Markup(item.summary).striptags()
-
+        
         items['description'] = "<![CDATA[{}]]>".format(
-            Markup(item.summary)
-        )
-
+            Markup(item.summary))
+        
         # Date the article was last modified.
         #  ex: <pubDate>Fri, 13 Jun 2014 04:59:00 -0300</pubDate>
         items['pubDate'] = rfc2822_date(
             set_date_tzinfo(
                 item.modified if hasattr(item, 'modified') else item.date,
-                self.settings.get('TIMEZONE', None))
-        )
-
+                self.settings.get('TIMEZONE', None)))
+        
         # Name(s) for the article's author(s).
         #  ex: <itunes:author>John Doe</itunes:author>
         if hasattr(item, 'author'):
             items['itunes:author'] = item.author.name
-
+        
         # Subtitle for the article.
         #  ex: <itunes:subtitle>My episode subtitle</itunes:subtitle>
         if hasattr(item, 'subtitle'):
             items['itunes:subtitle'] = Markup(item.subtitle).striptags()
-
+        
         # Ex:
         #  <itunes:image href="http://example.com/Episodio1.jpg" />
         if hasattr(item, 'image'):
             items['itunes:image'] = {
                 'href': '{0}{1}'.format(self.site_url, item.image)}
-
+        
         # Information about the episode audio.
         #  ex: <enclosure url="http://example.com/episode.m4a"
         #   length="872731" type="audio/x-m4a" />
@@ -279,12 +265,12 @@ class iTunesWriter(Writer):
                 # ... or default to 'audio/mpeg'.
                 enclosure['type'] = 'audio/mpeg'
             items['enclosure'] = enclosure
-
+        
         # Duration for the audio file.
         #  <itunes:duration>7:04</itunes:duration>
         if hasattr(item, 'duration'):
             items['itunes:duration'] = item.duration
-
+        
         # Unique identifier for the episode.
         # Use a 'guid' if available...
         #  ex: <guid>http://example.com/aae20050615.m4a</guid>
@@ -301,7 +287,7 @@ class iTunesWriter(Writer):
 class PodcastFeedGenerator(Generator):
     """Generates an iTunes content by inspecting all articles and invokes the
     iTunesWriter object, which will write the itunes Feed."""
-
+    
     def __init__(self, *args, **kwargs):
         """Starts a brand new feed generator."""
         super(PodcastFeedGenerator, self).__init__(*args, **kwargs)
@@ -313,7 +299,7 @@ class PodcastFeedGenerator(Generator):
         if self.podcasts:
             for show in self.podcasts:
                 self.podcast_episodes[show] = []
-
+    
     def generate_context(self):
         """Looks for all 'published' articles and add them to the episodes
         list."""
@@ -330,10 +316,10 @@ class PodcastFeedGenerator(Generator):
                             if show in self.podcasts:
                                 self.episodes.append(article)
                                 self.podcast_episodes[show].append(article)
-
+    
     def generate_output(self, writer):
         """Write out the iTunes feed to a file.
-
+        
         :param writer: A ``Pelican Writer`` instance.
         """
         if self.feed_path:
@@ -342,27 +328,42 @@ class PodcastFeedGenerator(Generator):
         if self.podcasts:
             # Backup all of the global settings
             self.original_settings = {}
-            self.original_settings['PODCAST_FEED_PATH'] = self.settings.get('PODCAST_FEED_PATH', None)
-            self.original_settings['PODCAST_FEED_TITLE'] = self.settings.get('PODCAST_FEED_TITLE', None)
-            self.original_settings['PODCAST_FEED_EXPLICIT'] = self.settings.get('PODCAST_FEED_EXPLICIT', None)
-            self.original_settings['PODCAST_FEED_LANGUAGE'] = self.settings.get('PODCAST_FEED_LANGUAGE', None)
-            self.original_settings['PODCAST_FEED_COPYRIGHT'] = self.settings.get('PODCAST_FEED_COPYRIGHT', None)
-            self.original_settings['PODCAST_FEED_SUBTITLE'] = self.settings.get('PODCAST_FEED_SUBTITLE', None)
-            self.original_settings['PODCAST_FEED_AUTHOR'] = self.settings.get('PODCAST_FEED_AUTHOR', None)
-            self.original_settings['PODCAST_FEED_SUMMARY'] = self.settings.get('PODCAST_FEED_SUMMARY', None)
-            self.original_settings['PODCAST_FEED_IMAGE'] = self.settings.get('PODCAST_FEED_IMAGE', None)
-            self.original_settings['PODCAST_FEED_OWNER_NAME'] = self.settings.get('PODCAST_FEED_OWNER_NAME', None)
-            self.original_settings['PODCAST_FEED_OWNER_EMAIL'] = self.settings.get('PODCAST_FEED_OWNER_EMAIL', None)
-            self.original_settings['PODCAST_FEED_CATEGORY'] = self.settings.get('PODCAST_FEED_CATEGORY', None)
+            self.original_settings['PODCAST_FEED_PATH'] = self.settings.get(
+                'PODCAST_FEED_PATH', None)
+            self.original_settings['PODCAST_FEED_TITLE'] = self.settings.get(
+                'PODCAST_FEED_TITLE', None)
+            self.original_settings['PODCAST_FEED_EXPLICIT'] = self.settings.get(
+                'PODCAST_FEED_EXPLICIT', None)
+            self.original_settings['PODCAST_FEED_LANGUAGE'] = self.settings.get(
+                'PODCAST_FEED_LANGUAGE', None)
+            self.original_settings['PODCAST_FEED_COPYRIGHT'] = self.settings.get(
+                'PODCAST_FEED_COPYRIGHT', None)
+            self.original_settings['PODCAST_FEED_SUBTITLE'] = self.settings.get(
+                'PODCAST_FEED_SUBTITLE', None)
+            self.original_settings['PODCAST_FEED_AUTHOR'] = self.settings.get(
+                'PODCAST_FEED_AUTHOR', None)
+            self.original_settings['PODCAST_FEED_SUMMARY'] = self.settings.get(
+                'PODCAST_FEED_SUMMARY', None)
+            self.original_settings['PODCAST_FEED_IMAGE'] = self.settings.get(
+                'PODCAST_FEED_IMAGE', None)
+            self.original_settings['PODCAST_FEED_OWNER_NAME'] = self.settings.get(
+                'PODCAST_FEED_OWNER_NAME', None)
+            self.original_settings['PODCAST_FEED_OWNER_EMAIL'] = self.settings.get(
+                'PODCAST_FEED_OWNER_EMAIL', None)
+            self.original_settings['PODCAST_FEED_CATEGORY'] = self.settings.get(
+                'PODCAST_FEED_CATEGORY', None)
             
             for show in self.podcasts:
                 # Override the global settings with the per-show settings
                 self.settings.update(self.podcasts[show])
-
+                
                 # Write out this podcast's feed
                 writer = iTunesWriter(self.output_path, self.settings)
-                writer.write_feed(self.podcast_episodes[show], self.context, self.podcasts[show]['PODCAST_FEED_PATH'])
-
+                writer.write_feed(
+                    self.podcast_episodes[show],
+                    self.context,
+                    self.podcasts[show]['PODCAST_FEED_PATH'])
+                
                 # Restore the original global settings
                 self.settings.update(self.original_settings)
 
