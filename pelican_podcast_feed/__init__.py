@@ -4,7 +4,7 @@
 __name__ = 'pelican_podcast_feed'
 __title__ = 'pelican_podcast_feed'
 __version__ = '0.0.1'
-__author__ = 'Kura'
+__author__ = 'Magnun Leno'
 __credits__ = ["Magnun Leno", "John Mercouris"]
 __maintainer__ = "John Mercouris"
 __email__ = "john@mercouris.email"
