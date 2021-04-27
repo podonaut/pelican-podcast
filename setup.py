@@ -1,16 +1,16 @@
 from setuptools import setup
 from setuptools import find_packages
 
-version = __import__('pelican_podcast_feed').__version__
-download_url = 'https://github.com/magnunleno/pelican-podcast-feed/archive/{}.zip'.format(version)
+version = __import__('pelican_podcast').__version__
+download_url = 'https://github.com/podonaut/pelican-podcast/archive/{}.zip'.format(version)
 
-setup(name='pelican_podcast_feed',
+setup(name='pelican_podcast',
       version=version,
-      url='https://github.com/magnunleno/pelican-podcast-feed',
+      url='https://github.com/podonaut/pelican-podcast',
       download_url=download_url,
       author="Magnun Leno",
-      maintainer="John Mercouris",
-      maintainer_email="john@mercouris.email",
+      maintainer="Douglas Kastle",
+      maintainer_email="douglas.kastle@gmail.com",
       description="This plugins adds a feed generator and feed writer for your podcast.",
       long_description=open("README.rst").read(),
       license='GPLV3',
@@ -21,12 +21,6 @@ setup(name='pelican_podcast_feed',
           'Development Status :: 5 - Production/Stable',
           'Operating System :: OS Independent',
           'Programming Language :: Python',
-          'Programming Language :: Python :: 2.6',
-          'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.1',
-          'Programming Language :: Python :: 3.2',
-          'Programming Language :: Python :: 3.3',
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: Implementation :: CPython',
           'Intended Audience :: Developers',
