@@ -5,10 +5,6 @@
 iTunes Feed Generator for Pelican.
 """
 
-from __future__ import unicode_literals
-
-
-import six
 from jinja2 import Markup
 from pelican import signals
 from pelican.writers import Writer
@@ -37,6 +33,67 @@ DEFAULT_ITEM_ELEMENTS = {}
 for key in ITEM_ELEMENTS:
     DEFAULT_ITEM_ELEMENTS[key] = None
 
+from mutagen.mp3 import MP3
+from datetime import timedelta
+import urllib.request
+from io import BytesIO
+from mutagen import MutagenError
+class AudioResolve:
+    def __init__(self, item):
+        self.item = item
+        self._audio = None
+        #self.file = '3342247-episode-i.mp3'
+        self.file = 'https://archive.org/download/gurucomedy/goc01.mp3'
+        #self.file = 'goc01.mp3'
+            
+    @property
+    def audio(self):
+        if self.file.startswith('http'):
+            r = urllib.request.urlopen(self.file)
+            self._length = r.headers["Content-Length"]
+            self._mime = r.headers["Content-Type"]
+            
+            try:
+                size = 128
+                filelike = BytesIO()
+                while 1:
+                    data = r.read(size)
+                    size *= 2
+                    filelike.seek(0, 2)
+                    filelike.write(data)
+                    filelike.seek(0)
+                    try:
+                        #return MP3(filelike)
+                        self._audio = MP3(filelike)
+                        length = self._audio.info.length
+                    except MutagenError:
+                        if not data:
+                            raise
+                        pass
+            finally:
+                r.close()
+                    
+            raise Exception(self._length, self._mime, length)
+        
+        if self._audio is None:
+            ext = self.file.split('.')[-1]
+            if 'mp3' == ext:
+                self._audio = MP3(self.file)
+            else:
+                raise Exception(f'Unsupported ext {ext}')
+        return self._audio
+    
+    @property
+    def duration(self):   
+        return str(timedelta(seconds=round(self.audio.info.length)))     
+
+    @property
+    def mime(self):   
+        return self.audio.mime[0]
+
+    @property
+    def length(self):   
+        return 0
 
 class PodcastFeed(Rss201rev2Feed):
     """Helper class which generates the XML based in the global settings"""
@@ -138,6 +195,7 @@ class PodcastFeed(Rss201rev2Feed):
                 handler.addQuickElement(
                     'itunes:category', attrs={'text': categories})
         
+        # PC20 locked tag
         pf_locked = f"yes"
         pf_locked_attr = {}
         if 'PODCAST_OWNER_EMAIL' in self.settings:
@@ -146,9 +204,19 @@ class PodcastFeed(Rss201rev2Feed):
             if not self.settings['PODCAST_LOCKED']:
                 pf_locked = f"no"
                 pf_locked_attr = {}
-            
         handler.addQuickElement(
             'podcast:locked', pf_locked, attrs=pf_locked_attr)
+        
+        # PC20 funding tag
+        if 'PODCAST_FUNDING' in self.settings:
+            for x in self.settings['PODCAST_FUNDING']:
+                attr = {'url': x[0]}
+                try:
+                    msg = x[1]
+                except IndexError:
+                    msg = ""
+                handler.addQuickElement(
+                    'podcast:funding', msg, attrs=attr)
     
     def add_item_elements(self, handler, item):
         """Adds a new element to the iTunes feed, using information from
@@ -165,13 +233,12 @@ class PodcastFeed(Rss201rev2Feed):
             if key == 'description':
                 content = item[key]
                 handler.startElement('description', {})
-                if not isinstance(content, six.text_type):
-                    content = six.text_type(content, handler._encoding)
-                content = handler._encoding
+                if not isinstance(content, str):
+                    content = str(content, handler._encoding)
                 content = content.replace("<html><body>", "")
                 handler._write(content)
                 handler.endElement('description')
-            elif isinstance(item[key], six.text_type):
+            elif isinstance(item[key], str):
                 handler.addQuickElement(key, item[key])
             elif type(item[key]) is dict:
                 handler.addQuickElement(key, attrs=item[key])
@@ -224,7 +291,7 @@ class feedWriter(Writer):
         
         # Link to the new article.
         #  http://example.com/episode-01
-        items['link'] = '{0}/{1}'.format(self.site_url, item.url)
+        items['link'] = f'{self.site_url}/{item.url}'
         
         # Title for the article.
         #  ex: <title>Episode Title</title>
@@ -238,8 +305,7 @@ class feedWriter(Writer):
         else:
             items['itunes:summary'] = Markup(item.summary).striptags()
         
-        items['description'] = "<![CDATA[{}]]>".format(
-            Markup(item.summary))
+        items['description'] = f"<![CDATA[{Markup(item.summary)}]]>"
         
         # Date the article was last modified.
         #  ex: <pubDate>Fri, 13 Jun 2014 04:59:00 -0300</pubDate>
@@ -262,12 +328,16 @@ class feedWriter(Writer):
         #  <itunes:image href="http://example.com/Episodio1.jpg" />
         if hasattr(item, 'image'):
             items['itunes:image'] = {
-                'href': '{0}{1}'.format(self.site_url, item.image)}
+                f'href': '{self.site_url}{item.image}'}
         
         # Information about the episode audio.
         #  ex: <enclosure url="http://example.com/episode.m4a"
         #   length="872731" type="audio/x-m4a" />
         if hasattr(item, 'podcast'):
+            
+            audio = AudioResolve(item)
+            raise Exception(audio.file, audio.mime, audio.duration, audio.length)
+            
             enclosure = {'url': item.podcast}
             # Include the file size if available.
             if hasattr(item, 'length'):

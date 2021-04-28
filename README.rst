@@ -1,4 +1,4 @@
-Pelican Podcast Feed
+Pelican Podcast
 ########################################################################
 
 This plugins adds a feed generator and feed writer for your podcast.
@@ -41,6 +41,7 @@ These are implemented as variables in the pelicanconf file.
   PODCAST_OWNER_NAME = u''
   PODCAST_OWNER_EMAIL = u''
   PODCAST_CATEGORY = ['iTunes Category','iTunes Subcategory']
+  PODCAST_LOCKED = u''
 
 In order to verify that your RSS feed for your podcast is being
 correctly generated, you can visit `example.com/` +
@@ -105,3 +106,18 @@ represents a podcast episode, when configured with :podcast:):
 
 Please note that the length is in bytes, whereas the duration is how
 long (timewise) the MP4 file is.
+
+Podcasting 2.0
+========================================================================
+
+::
+    PODCAST_LOCKED = False
+    
+    PODCAST_LOCKED = True
+    PODCAST_OWNER_EMAIL = ''
+
+
+    PODCAST_FUNDING = [
+        ['Paypal', 'https://paypal.me/davekeeshan'],
+        ['Patreon', 'https://patreon.com/davekeeshan'],
+    ]
