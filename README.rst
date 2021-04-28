@@ -29,18 +29,18 @@ These are implemented as variables in the pelicanconf file.
 
 ::
 
-  PODCAST_FEED_PATH = u''
-  PODCAST_FEED_TITLE = u''
-  PODCAST_FEED_EXPLICIT = u''
-  PODCAST_FEED_LANGUAGE = u''
-  PODCAST_FEED_COPYRIGHT = u''
-  PODCAST_FEED_SUBTITLE = u''
-  PODCAST_FEED_AUTHOR = u''
-  PODCAST_FEED_SUMMARY = u''
-  PODCAST_FEED_IMAGE = u''
-  PODCAST_FEED_OWNER_NAME = u''
-  PODCAST_FEED_OWNER_EMAIL = u''
-  PODCAST_FEED_CATEGORY = ['iTunes Category','iTunes Subcategory']
+  PODCAST_PATH = u''
+  PODCAST_TITLE = u''
+  PODCAST_EXPLICIT = u''
+  PODCAST_LANGUAGE = u''
+  PODCAST_COPYRIGHT = u''
+  PODCAST_SUBTITLE = u''
+  PODCAST_AUTHOR = u''
+  PODCAST_SUMMARY = u''
+  PODCAST_IMAGE = u''
+  PODCAST_OWNER_NAME = u''
+  PODCAST_OWNER_EMAIL = u''
+  PODCAST_CATEGORY = ['iTunes Category','iTunes Subcategory']
 
 In order to verify that your RSS feed for your podcast is being
 correctly generated, you can visit `example.com/` +
@@ -71,18 +71,18 @@ from the master feed settings.
 
   PODCASTS = {
   	'category-slug-1': {
-  		'PODCAST_FEED_PATH': u'',
-  		'PODCAST_FEED_TITLE': u'',
-  		'PODCAST_FEED_SUBTITLE': u'',
-  		'PODCAST_FEED_SUMMARY': u'',
-  		'PODCAST_FEED_IMAGE': u'',
+  		'PODCAST_PATH': u'',
+  		'PODCAST_TITLE': u'',
+  		'PODCAST_SUBTITLE': u'',
+  		'PODCAST_SUMMARY': u'',
+  		'PODCAST_IMAGE': u'',
   	},
   	'category-slug-2': {
-  		'PODCAST_FEED_PATH': u'',
-  		'PODCAST_FEED_TITLE': u'',
-  		'PODCAST_FEED_SUBTITLE': u'',
-  		'PODCAST_FEED_SUMMARY': u'',
-  		'PODCAST_FEED_IMAGE': u'',
+  		'PODCAST_PATH': u'',
+  		'PODCAST_TITLE': u'',
+  		'PODCAST_SUBTITLE': u'',
+  		'PODCAST_SUMMARY': u'',
+  		'PODCAST_IMAGE': u'',
   	},
   }
 
