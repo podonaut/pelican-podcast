@@ -73,7 +73,7 @@ class AudioResolve:
             finally:
                 r.close()
                     
-            raise Exception(self._length, self._mime, length)
+            raise Exception(self._length, self._mime, self._audio.info.length)
         
         if self._audio is None:
             ext = self.file.split('.')[-1]
