@@ -33,68 +33,6 @@ DEFAULT_ITEM_ELEMENTS = {}
 for key in ITEM_ELEMENTS:
     DEFAULT_ITEM_ELEMENTS[key] = None
 
-from mutagen.mp3 import MP3
-from datetime import timedelta
-import urllib.request
-from io import BytesIO
-from mutagen import MutagenError
-class AudioResolve:
-    def __init__(self, item):
-        self.item = item
-        self._audio = None
-        #self.file = '3342247-episode-i.mp3'
-        self.file = 'https://archive.org/download/gurucomedy/goc01.mp3'
-        #self.file = 'goc01.mp3'
-            
-    @property
-    def audio(self):
-        if self.file.startswith('http'):
-            r = urllib.request.urlopen(self.file)
-            self._length = r.headers["Content-Length"]
-            self._mime = r.headers["Content-Type"]
-            
-            try:
-                size = 128
-                filelike = BytesIO()
-                while 1:
-                    data = r.read(size)
-                    size *= 2
-                    filelike.seek(0, 2)
-                    filelike.write(data)
-                    filelike.seek(0)
-                    try:
-                        #return MP3(filelike)
-                        self._audio = MP3(filelike)
-                        length = self._audio.info.length
-                    except MutagenError:
-                        if not data:
-                            raise
-                        pass
-            finally:
-                r.close()
-                    
-            raise Exception(self._length, self._mime, self._audio.info.length)
-        
-        if self._audio is None:
-            ext = self.file.split('.')[-1]
-            if 'mp3' == ext:
-                self._audio = MP3(self.file)
-            else:
-                raise Exception(f'Unsupported ext {ext}')
-        return self._audio
-    
-    @property
-    def duration(self):   
-        return str(timedelta(seconds=round(self.audio.info.length)))     
-
-    @property
-    def mime(self):   
-        return self.audio.mime[0]
-
-    @property
-    def length(self):   
-        return 0
-
 class PodcastFeed(Rss201rev2Feed):
     """Helper class which generates the XML based in the global settings"""
     
@@ -257,7 +195,6 @@ class feedWriter(Writer):
         """Helper function (called by the super class) which will initialize
         the PodcastFeed object."""
         if len(args) == 3:
-            # we are on Pelican >=2.7
             feed_type, feed_title, context = args
         else:
             # this is not expected, let's provide a useful message
@@ -335,8 +272,8 @@ class feedWriter(Writer):
         #   length="872731" type="audio/x-m4a" />
         if hasattr(item, 'podcast'):
             
-            audio = AudioResolve(item)
-            raise Exception(audio.file, audio.mime, audio.duration, audio.length)
+            #audio = AudioResolve(item)
+            #raise Exception(audio.file, audio.mime, audio.duration, audio.length)
             
             enclosure = {'url': item.podcast}
             # Include the file size if available.
